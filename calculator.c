@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <unistd.h>
 #include <math.h>
+//simple calculator with 5 operator: + - x / %
 void func(char * so1,  char operato, char* so2);
 void writef(double num) ;
 double readf();

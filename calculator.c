@@ -6,6 +6,11 @@
 #include <unistd.h>
 #include <math.h>
 //simple calculator with 5 operator: + - x / %
+/*ex: <number1> <operator> <number2>
+"5 + 1" >>6
+"10 / 3" >>3.33
+"10 % 3" >>1
+	*/
 void func(char * so1,  char operato, char* so2);
 void writef(double num) ;
 double readf();

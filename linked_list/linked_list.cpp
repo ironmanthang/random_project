@@ -25,7 +25,7 @@ void add_end(node*& head,int var){
     }temp->next=newnode;
     }
 }
-void add_random(node*& head,int var,int index){
+void add_index(node*& head,int var,int index){
     node* newnode=new node;
     node* temp=head;
     newnode->data=var;
@@ -71,7 +71,7 @@ int main() {
     add_end(head,1);
     add_end(head,2);
     add_end(head,3);
-    add_random(head,50,4);
+    add_index(head,50,4);
     display(head);
 
 return 0;

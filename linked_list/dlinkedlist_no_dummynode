@@ -1,0 +1,184 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
+using namespace std;
+//no dummy node
+template <class T>
+class DLinkedList {
+public:
+    class Node; // Forward declaration
+protected:
+    Node* head;
+    Node* tail;
+    int count;
+public:
+    DLinkedList();
+    ~DLinkedList();
+    void add(const T &e); // Add to the end
+    void add(int index, const T &e); // Add at a specific index
+    int size(); // Return the size of the list
+    string toString(); // String representation of the list
+    bool    empty();
+    T       get(int index);
+    void    set(int index, const T &e);
+    int     indexOf(const T &item);
+    bool    contains(const T &item);
+public:
+    class Node {
+    private:
+        T data;
+        Node* next;
+        Node* previous;
+        friend class DLinkedList<T>;
+
+    public:
+        Node()
+        {
+            this->previous = NULL;
+            this->next = NULL;
+        }
+        Node(const T& data) : data(data), next(nullptr), previous(nullptr) {}
+    };
+};
+
+template <class T>
+DLinkedList<T>::DLinkedList() : head(nullptr), tail(nullptr), count(0) {}
+
+template <class T>
+DLinkedList<T>::~DLinkedList() {
+    // Destructor to free all nodes
+    Node* current = head;
+    while (current != nullptr) {
+        Node* next = current->next;
+        delete current;
+        current = next;
+    }
+}
+
+template <class T>
+void DLinkedList<T>::add(const T& e) {
+    Node* newNode = new Node(e);
+    if (count == 0) {  // Empty list case
+        head = tail = newNode;
+    } else {  // Non-empty list
+        tail->next = newNode;
+        newNode->previous = tail;
+        tail = newNode;
+    }
+    count++;
+}
+
+template <class T>
+void DLinkedList<T>::add(int index, const T& e) {
+    if (index < 0 || index > count) {
+        throw out_of_range("Index is out of range.");
+    }
+
+    Node* newNode = new Node(e);
+
+    if (index == 0) {  // Inserting at the head
+        if (count == 0) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->previous = newNode;
+            head = newNode;
+        }
+    } else if (index == count) {  // Inserting at the tail (equivalent to add(e))
+        tail->next = newNode;
+        newNode->previous = tail;
+        tail = newNode;
+    } else {  // Inserting somewhere in the middle
+        Node* temp = head;
+        for (int i = 0; i < index; i++) {
+            temp = temp->next;
+        }
+        newNode->next = temp;
+        newNode->previous = temp->previous;
+        temp->previous->next = newNode;
+        temp->previous = newNode;
+    }
+
+    count++;
+}
+
+template <class T>
+int DLinkedList<T>::size() {
+    return count;
+}
+
+template <class T>
+string DLinkedList<T>::toString() {
+    ostringstream oss;
+    oss << "[";
+    Node* temp = head;
+    while (temp != nullptr) {
+        oss << temp->data;
+        temp = temp->next;
+        if (temp != nullptr) {
+            oss << ",";
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+template <class T>
+T DLinkedList<T>::get(int index) {
+    if (index < 0 || index >= count) {
+        throw out_of_range("Index is out of range.");
+    }
+    Node* temp=head;
+    for(int i=0;i<index;i++){
+        temp=temp->next;
+    }
+    return temp->data;
+}
+
+template <class T>
+void DLinkedList<T>::set(int index, const T& e) {
+    if (index < 0 || index >= count) {
+        throw out_of_range("Index is out of range.");
+    }
+    Node* temp=head;
+    for(int i=0;i<index;i++){
+        temp=temp->next;
+    }temp->data=e;
+}
+
+template <class T>
+bool DLinkedList<T>::empty() {
+    return count==0;
+}
+
+template <class T>
+int DLinkedList<T>::indexOf(const T& item) {
+    int check=0;
+    Node* temp=head;
+    while(temp!=nullptr){
+        if(temp->data==item){
+        return check;
+        }
+        temp=temp->next;
+        check++;
+    }
+    return -1;
+}
+
+template <class T>
+bool DLinkedList<T>::contains(const T& item) {
+    return indexOf(item)!=-1;
+}
+int main() {
+    DLinkedList<int> list;
+int size = 10;
+int value[] = {2,5,6,3,67,332,43,1,0,9};
+for(int idx=0; idx < size; idx++){
+  list.add(idx);
+}
+for(int idx=0; idx < size; idx++){
+  list.set(idx, value[idx]);
+}
+cout << list.toString();
+    return 0;
+}

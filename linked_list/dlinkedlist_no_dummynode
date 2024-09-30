@@ -182,3 +182,146 @@ for(int idx=0; idx < size; idx++){
 cout << list.toString();
     return 0;
 }
+///////////////////////////
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <stdexcept>
+using namespace std;
+template <class T>
+class ArrayList {
+protected:
+    T* data;        // dynamic array to store the list's items
+    int capacity;   // size of the dynamic array
+    int count;      // number of items stored in the array
+public:
+    ArrayList(){capacity = 5; count = 0; data = new T[5];}
+    ~ArrayList(){ delete[] data; }
+    void    add(T e);
+    void    add(int index, T e);
+    int     size();
+    bool    empty();
+    void    clear();
+    T       get(int index);
+    void    set(int index, T e);
+    int     indexOf(T item);
+    bool    contains(T item);
+    T       removeAt(int index);
+    bool    removeItem(T item);
+    void    ensureCapacity(int index);
+    string toString();
+};
+template <class T>
+void ArrayList<T>::ensureCapacity(int cap) {
+    if (cap > capacity) {
+        int new_capacity = capacity * 1.5; // Increase capacity by 1.5 times
+        if (new_capacity < cap) {
+            new_capacity = cap; // Ensure new capacity is at least as large as cap
+        }
+        T* new_data = new T[new_capacity];
+        
+        // Copy the old data to the new array
+        for (int i = 0; i < count; ++i) {
+            new_data[i] = data[i];
+        }
+        
+        delete[] data;  // Free the old array
+        data = new_data; // Assign the new array to data
+        capacity = new_capacity; // Update capacity
+    }
+}
+
+template <class T>
+void ArrayList<T>::add(T e) {
+    ensureCapacity(count + 1); // Ensure there's enough room for the new element
+    data[count] = e;           // Insert the element at the end
+    count++;                   // Increase the element count
+}
+
+template <class T>
+void ArrayList<T>::add(int index, T e) {
+    if (index < 0 || index > count) {
+        throw std::out_of_range("The input index is out of range!");
+    }
+    
+    ensureCapacity(count + 1); // Ensure there's enough room for the new element
+    
+    // Shift elements to the right to make room for the new element
+    for (int i = count; i > index; --i) {
+        data[i] = data[i - 1];
+    }
+    
+    data[index] = e; // Insert the new element at the specified index
+    count++;         // Increase the element count
+}
+
+template <class T>
+int ArrayList<T>::size() {
+    return count; // Return the number of elements in the list
+}
+template<class T>
+T ArrayList<T>::removeAt(int index) {
+    if (index < 0 || index >= count) {
+        throw std::out_of_range("index is out of range");
+    }
+
+    T removedItem = data[index];  // Store the item to be removed
+
+    // Shift elements to the left to fill the gap
+    for (int i = index; i < count - 1; ++i) {
+        data[i] = data[i + 1];
+    }
+
+    count--;  // Decrease the count of elements
+
+    return removedItem;  // Return the removed item
+}
+
+template<class T>
+bool ArrayList<T>::removeItem(T item) {
+    // Iterate through the array to find the first occurrence of the item
+    for (int i = 0; i < count; ++i) {
+        if (data[i] == item) {
+            // Remove the item at the found index
+            removeAt(i);
+            return true;  // Return true indicating successful removal
+        }
+    }
+    return false;  // Return false if the item was not found
+}
+
+template<class T>
+void ArrayList<T>::clear() {
+    if (data != nullptr) {
+        delete[] data;  // Delete the existing dynamic array
+    }
+    capacity = 5;       // Reset capacity to 5
+    count = 0;          // Reset count to 0
+    data = new T[capacity];  // Reinitialize the array
+}
+
+template<class T>
+string ArrayList<T>::toString() {
+    ostringstream oss;
+    oss << "[";
+    for (int i = 0; i < count; ++i) {
+        oss << data[i];
+        if (i < count - 1) {
+            oss << ", ";
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+int main() {ArrayList<int> arr;
+int size = 20;
+
+for(int index = 0; index < size; index++){
+    arr.add(0, index);
+}
+
+cout << arr.toString() << '\n';
+cout << arr.size() << '\n';
+arr.ensureCapacity(5);
+    return 0;
+}
